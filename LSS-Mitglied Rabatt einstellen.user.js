@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Mitglied Rabatt einstellen
 // @namespace    https://www.leitstellenspiel.de
-// @version      1.0
+// @version      2.0
 // @description  Stellt den Rabattwert basierend auf dem Abgabewert der Mitglieder ein
 // @author       MissSobol
 // @match        https://www.leitstellenspiel.de/verband/mitglieder*
@@ -11,20 +11,35 @@
 (function() {
     'use strict';
 
-// Funktion zum Einstellen des Rabattwerts
-function setMemberDiscount(memberRow) {
-    var contributionCell = memberRow.querySelector('td:nth-child(5)'); // Abgabe-Zelle
-    var contribution = parseInt(contributionCell.textContent); // Abgabewert
+    // Konfiguration der festen Rabattwerte
+    var discountConfig = {
+        0: 0,   // Abgabewert: Rabattwert
+        1: 10,
+        2: 20,
+        3: 30,
+        4: 40,
+        5: 50,
+        6: 60,
+        7: 70,
+        8: 80,
+        9: 90,
+        10: 100,
+    };
 
-    var discountButtons = memberRow.querySelectorAll('td:nth-child(4) a.btn-discount'); // Rabatt-Buttons
-    var discountIndex = Math.min(contribution, 10); // Rabatt-Index berechnen (maximal 10)
+    // Funktion zum Einstellen des Rabattwerts
+    function setMemberDiscount(memberRow) {
+        var contributionCell = memberRow.querySelector('td:nth-child(5)'); // Abgabe-Zelle
+        var contribution = parseInt(contributionCell.textContent); // Abgabewert
 
-    // Überprüfen, ob der Rabatt-Button vorhanden ist
-    if (discountButtons.length > discountIndex) {
-        // Klick auf den entsprechenden Rabatt-Button
-        discountButtons[discountIndex].click();
+        var discountButtons = memberRow.querySelectorAll('td:nth-child(4) a.btn-discount'); // Rabatt-Buttons
+
+        // Überprüfen, ob der Abgabewert in der Konfiguration vorhanden ist
+        if (contribution in discountConfig) {
+            var discountValue = discountConfig[contribution];
+            // Klick auf den entsprechenden Rabatt-Button basierend auf dem Rabattwert
+            discountButtons[discountValue / 10].click();
+        }
     }
-}
 
 // Funktion zum Einstellen des Rabattwerts bei jedem Klick
 function setDiscountValues() {
